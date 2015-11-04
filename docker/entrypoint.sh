@@ -10,6 +10,7 @@ set -e
 DB_HOST="${DB_HOST:-127.0.0.1}"
 DB_HOST_PORT="${DB_HOST_PORT:-5432}"
 DB_NAME="${DB_NAME:-zulip}"
+DB_SSL="${DB_SSL:-verify}"
 DB_SCHEMA="${DB_SCHEMA:-zulip}"
 DB_USER="${DB_USER:-zulip}"
 DB_PASSWORD="${DB_PASSWORD:-zulip}"
@@ -236,7 +237,7 @@ databaseConfiguration() {
     'CONN_MAX_AGE': 600,
     'OPTIONS': {
         'connection_factory': TimeTrackingConnection,
-        'sslmode': 'require',
+        'sslmode': $DB_SSL,
     },
   },
 }"
@@ -368,6 +369,8 @@ bootstrapDatabase() {
         ALTER ROLE $DB_USER SET search_path TO zulip,public;
         CREATE DATABASE $DB_NAME OWNER=$DB_USER;
         CREATE SCHEMA $DB_SCHEMA AUTHORIZATION $DB_USER;
+        GRANT USAGE ON SCHEMA $DB_SCHEMA TO $DB_USER;
+        GRANT CREATE ON SCHEMA $DB_SCHEMA TO $DB_USER;
         """ | psql -h "$DB_HOST" -p "$DB_HOST_PORT" -U "$DB_USER" || :
         echo "Creating tsearch_extras extension ..."
         echo "CREATE EXTENSION tsearch_extras SCHEMA $DB_SCHEMA;" | \
