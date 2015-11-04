@@ -368,6 +368,7 @@ bootstrapDatabase() {
         CREATE USER $DB_USER;
         ALTER ROLE $DB_USER SET search_path TO zulip,public;
         CREATE DATABASE $DB_NAME OWNER=$DB_USER;
+        \connect $DB_NAME;
         CREATE SCHEMA $DB_SCHEMA AUTHORIZATION $DB_USER;
         GRANT USAGE ON SCHEMA $DB_SCHEMA TO $DB_USER;
         GRANT CREATE ON SCHEMA $DB_SCHEMA TO $DB_USER;
@@ -404,6 +405,11 @@ userCreationConfiguration() {
 }
 zulipFirstStartInit() {
     echo "Executing Zulip first start init ..."
+    # TODO: dictionary should be included
+    touch /usr/share/postgresql/9.4/tsearch_data/english.stop
+    touch /usr/share/postgresql/9.4/tsearch_data/en_us.dict
+    touch /usr/share/postgresql/9.4/tsearch_data/en_us.affix
+
     if ([ "$FORCE_FIRST_START_INIT" != "True" ] && [ "$FORCE_FIRST_START_INIT" != "true" ]) && [ -e "$DATA_DIR/.initiated" ]; then
         echo "First Start Init not needed."
         return 0
