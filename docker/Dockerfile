@@ -3,7 +3,6 @@ MAINTAINER Alexander Trost <galexrt@googlemail.com>
 
 ENV ZULIP_VERSION="1.3.7" ZULIP_CHECKSUM="88bfa668eb14e07b0b806977db2ae2cd4d7e7ef8" DATA_DIR="/data"
 
-ADD entrypoint.sh /entrypoint.sh
 ADD zulip-puppet /root/zulip-puppet
 
 RUN wget -q -O /root/zulip-ppa.asc https://zulip.com/dist/keys/zulip-ppa.asc && \
@@ -38,5 +37,6 @@ RUN wget -q -O /root/zulip-ppa.asc https://zulip.com/dist/keys/zulip-ppa.asc && 
 VOLUME ["$DATA_DIR"]
 EXPOSE 80 443
 
+ADD entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["app:run"]

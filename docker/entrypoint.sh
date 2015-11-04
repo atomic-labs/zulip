@@ -237,7 +237,7 @@ databaseConfiguration() {
     'CONN_MAX_AGE': 600,
     'OPTIONS': {
         'connection_factory': TimeTrackingConnection,
-        'sslmode': $DB_SSL,
+        'sslmode': '$DB_SSL',
     },
   },
 }"
