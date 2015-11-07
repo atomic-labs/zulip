@@ -78,7 +78,7 @@ if prev_deploy:
     changed_files.add(os.path.join(STATIC_PATH, 'js/bundle.js'))
 
 JS_SPECS = settings.JS_SPECS
-CLOSURE_BINARY = '/usr/bin/closure-compiler'
+CLOSURE_BINARY = '/usr/local/bin/closure-compiler'
 if not os.path.exists(CLOSURE_BINARY):
     CLOSURE_BINARY = 'tools/closure-compiler/run'
     if not os.path.exists(CLOSURE_BINARY):

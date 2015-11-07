@@ -1,9 +1,9 @@
 FROM quay.io/sameersbn/ubuntu:latest
-MAINTAINER Alexander Trost <galexrt@googlemail.com>
+MAINTAINER Dean Chen <dean@atomic.vc>
 
-ENV ZULIP_VERSION="1.3.7" ZULIP_CHECKSUM="88bfa668eb14e07b0b806977db2ae2cd4d7e7ef8" DATA_DIR="/data"
+ENV DATA_DIR="/data"
 
-ADD zulip-puppet /root/zulip-puppet
+ADD docker/zulip-puppet /root/zulip-puppet
 
 RUN wget -q -O /root/zulip-ppa.asc https://zulip.com/dist/keys/zulip-ppa.asc && \
     apt-key add /root/zulip-ppa.asc && \
@@ -11,11 +11,11 @@ RUN wget -q -O /root/zulip-ppa.asc https://zulip.com/dist/keys/zulip-ppa.asc && 
     echo "deb-src http://ppa.launchpad.net/tabbott/zulip/ubuntu trusty main" >> /etc/apt/sources.list.d/zulip.list && \
     apt-get -qq update && \
     apt-get -q dist-upgrade -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get -q install -y puppet git python-dev python-six python-pbs && \
-    mkdir -p "/root/zulip" "/etc/zulip" "$DATA_DIR" && \
-    wget -q "https://www.zulip.com/dist/releases/zulip-server-$ZULIP_VERSION.tar.gz" -P "/tmp" && \
-    echo "$ZULIP_CHECKSUM /tmp/zulip-server-$ZULIP_VERSION.tar.gz" | sha1sum -c && \
-    tar xfz "/tmp/zulip-server-$ZULIP_VERSION.tar.gz" -C "/root/zulip" --remove-files --strip-components=1 && \
+    DEBIAN_FRONTEND=noninteractive apt-get -q install -y puppet git python-dev python-six python-pbs
+
+ADD . /root/zulip
+
+RUN mkdir -p "/root/zulip" "/etc/zulip" "$DATA_DIR" && \
     echo "[machine]\npuppet_classes = zulip::voyager\ndeploy_type = voyager" > /etc/zulip/zulip.conf && \
     rm -rf /root/zulip/puppet/zulip_internal /root/zulip/puppet/zulip && \
     mv -f /root/zulip-puppet /root/zulip/puppet/zulip && \
@@ -28,11 +28,9 @@ RUN wget -q -O /root/zulip-ppa.asc https://zulip.com/dist/keys/zulip-ppa.asc && 
     ln -nsf "$ZULIP_DEPLOY_PATH" "/home/zulip/deployments/next" && \
     ln -nsf "$ZULIP_DEPLOY_PATH" "/home/zulip/deployments/current" && \
     ln -nsf /etc/zulip/settings.py "$ZULIP_DEPLOY_PATH/zproject/local_settings.py" && \
+    /root/zulip/tools/update-prod-static && \
     cp -rfT "$ZULIP_DEPLOY_PATH/prod-static/serve" "/home/zulip/prod-static" && \
-    chown -R zulip:zulip /home/zulip /var/log/zulip /etc/zulip/settings.py && \
-    apt-get -qq autoremove --purge -y && \
-    apt-get -qq clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    chown -R zulip:zulip /home/zulip /var/log/zulip /etc/zulip/settings.py
 
 VOLUME ["$DATA_DIR"]
 EXPOSE 80 443

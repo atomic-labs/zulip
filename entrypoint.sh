@@ -405,10 +405,6 @@ userCreationConfiguration() {
 }
 zulipFirstStartInit() {
     echo "Executing Zulip first start init ..."
-    # TODO: dictionary should be included
-    touch /usr/share/postgresql/9.4/tsearch_data/english.stop
-    touch /usr/share/postgresql/9.4/tsearch_data/en_us.dict
-    touch /usr/share/postgresql/9.4/tsearch_data/en_us.affix
 
     if ([ "$FORCE_FIRST_START_INIT" != "True" ] && [ "$FORCE_FIRST_START_INIT" != "true" ]) && [ -e "$DATA_DIR/.initiated" ]; then
         echo "First Start Init not needed."
