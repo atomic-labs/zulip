@@ -1,7 +1,7 @@
 FROM quay.io/sameersbn/ubuntu:latest
 MAINTAINER Dean Chen <dean@atomic.vc>
 
-ENV DATA_DIR="/data"
+ENV ZULIP_VERSION="1.0" DATA_DIR="/data"
 
 ADD docker/zulip-puppet /root/zulip-puppet
 
@@ -16,6 +16,7 @@ RUN wget -q -O /root/zulip-ppa.asc https://zulip.com/dist/keys/zulip-ppa.asc && 
 ADD . /root/zulip
 
 RUN mkdir -p "/root/zulip" "/etc/zulip" "$DATA_DIR" && \
+    tar xfz "zulip-server-$ZULIP_VERSION.tar.gz" -C "/root/zulip" --remove-files --strip-components=1 && \
     echo "[machine]\npuppet_classes = zulip::voyager\ndeploy_type = voyager" > /etc/zulip/zulip.conf && \
     rm -rf /root/zulip/puppet/zulip_internal /root/zulip/puppet/zulip && \
     mv -f /root/zulip-puppet /root/zulip/puppet/zulip && \

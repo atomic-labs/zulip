@@ -18,38 +18,37 @@ class Migration(migrations.Migration):
     if "postgres" not in settings.DATABASES["default"]["ENGINE"]:
         zulip_postgres_migrations = []
     else:
-        zulip_postgres_migrations = []
-#         zulip_postgres_migrations = [
-#             # Full-text search
-#             migrations.RunSQL("""
-# CREATE TEXT SEARCH DICTIONARY english_us_hunspell
-#   (template = ispell, DictFile = en_us, AffFile = en_us, StopWords = zulip_english);
-# CREATE TEXT SEARCH CONFIGURATION zulip.english_us_search (COPY=pg_catalog.english);
-# ALTER TEXT SEARCH CONFIGURATION zulip.english_us_search
-#   ALTER MAPPING FOR asciiword, asciihword, hword_asciipart, word, hword, hword_part
-#   WITH english_us_hunspell, english_stem;
-#
-# CREATE FUNCTION escape_html(text) RETURNS text IMMUTABLE LANGUAGE 'sql' AS $$
-#   SELECT replace(replace(replace(replace(replace($1, '&', '&amp;'), '<', '&lt;'),
-#                                  '>', '&gt;'), '"', '&quot;'), '''', '&#39;');
-# $$ ;
-#
-# ALTER TABLE zerver_message ADD COLUMN search_tsvector tsvector;
-# CREATE INDEX zerver_message_search_tsvector ON zerver_message USING gin(search_tsvector);
-# ALTER INDEX zerver_message_search_tsvector SET (fastupdate = OFF);
-#
-# CREATE TABLE fts_update_log (id SERIAL PRIMARY KEY, message_id INTEGER NOT NULL);
-# CREATE FUNCTION do_notify_fts_update_log() RETURNS trigger LANGUAGE plpgsql AS
-#   $$ BEGIN NOTIFY fts_update_log; RETURN NEW; END $$;
-# CREATE TRIGGER fts_update_log_notify AFTER INSERT ON fts_update_log
-#   FOR EACH STATEMENT EXECUTE PROCEDURE do_notify_fts_update_log();
-# CREATE FUNCTION append_to_fts_update_log() RETURNS trigger LANGUAGE plpgsql AS
-#   $$ BEGIN INSERT INTO fts_update_log (message_id) VALUES (NEW.id); RETURN NEW; END $$;
-# CREATE TRIGGER zerver_message_update_search_tsvector_async
-#   BEFORE INSERT OR UPDATE OF subject, rendered_content ON zerver_message
-#   FOR EACH ROW EXECUTE PROCEDURE append_to_fts_update_log();
-# """),
-#             ]
+        zulip_postgres_migrations = [
+            # Full-text search
+            migrations.RunSQL("""
+CREATE TEXT SEARCH DICTIONARY english_us_hunspell
+  (template = ispell, DictFile = en_us, AffFile = en_us, StopWords = zulip_english);
+CREATE TEXT SEARCH CONFIGURATION zulip.english_us_search (COPY=pg_catalog.english);
+ALTER TEXT SEARCH CONFIGURATION zulip.english_us_search
+  ALTER MAPPING FOR asciiword, asciihword, hword_asciipart, word, hword, hword_part
+  WITH english_us_hunspell, english_stem;
+
+CREATE FUNCTION escape_html(text) RETURNS text IMMUTABLE LANGUAGE 'sql' AS $$
+  SELECT replace(replace(replace(replace(replace($1, '&', '&amp;'), '<', '&lt;'),
+                                 '>', '&gt;'), '"', '&quot;'), '''', '&#39;');
+$$ ;
+
+ALTER TABLE zerver_message ADD COLUMN search_tsvector tsvector;
+CREATE INDEX zerver_message_search_tsvector ON zerver_message USING gin(search_tsvector);
+ALTER INDEX zerver_message_search_tsvector SET (fastupdate = OFF);
+
+CREATE TABLE fts_update_log (id SERIAL PRIMARY KEY, message_id INTEGER NOT NULL);
+CREATE FUNCTION do_notify_fts_update_log() RETURNS trigger LANGUAGE plpgsql AS
+  $$ BEGIN NOTIFY fts_update_log; RETURN NEW; END $$;
+CREATE TRIGGER fts_update_log_notify AFTER INSERT ON fts_update_log
+  FOR EACH STATEMENT EXECUTE PROCEDURE do_notify_fts_update_log();
+CREATE FUNCTION append_to_fts_update_log() RETURNS trigger LANGUAGE plpgsql AS
+  $$ BEGIN INSERT INTO fts_update_log (message_id) VALUES (NEW.id); RETURN NEW; END $$;
+CREATE TRIGGER zerver_message_update_search_tsvector_async
+  BEFORE INSERT OR UPDATE OF subject, rendered_content ON zerver_message
+  FOR EACH ROW EXECUTE PROCEDURE append_to_fts_update_log();
+"""),
+            ]
 
     operations = [
         migrations.CreateModel(

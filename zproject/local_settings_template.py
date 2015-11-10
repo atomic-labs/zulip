@@ -7,18 +7,18 @@
 
 # The user-accessible Zulip hostname for this installation, e.g.
 # zulip.example.com
-EXTERNAL_HOST = 'zulip.example.com'
+EXTERNAL_HOST = 'alphachat.rexdelivery.com'
 
 # The email address for the person or team who maintain the Zulip
 # Voyager installation. Will also get support emails. (e.g. zulip-admin@example.com)
-ZULIP_ADMINISTRATOR = 'zulip-admin@example.com'
+ZULIP_ADMINISTRATOR = 'dev.rexdelivery.com'
 
 # The domain for your organization, e.g. example.com
-ADMIN_DOMAIN = 'example.com'
+ADMIN_DOMAIN = 'rexdelivery.com'
 
 # Enable at least one of the following authentication backends.
 AUTHENTICATION_BACKENDS = (
-#                           'zproject.backends.EmailAuthBackend', # Email and password; see SMTP setup below
+                          'zproject.backends.EmailAuthBackend', # Email and password; see SMTP setup below
 #                           'zproject.backends.ZulipRemoteUserBackend', # Local SSO
 #                           'zproject.backends.GoogleMobileOauth2Backend', # Google Apps, setup below
 #                           'zproject.backends.ZulipLDAPAuthBackend', # LDAP, setup below
@@ -67,15 +67,15 @@ SSO_APPEND_DOMAIN = None
 # email_password in the Zulip secrets file, Zulip uses Django's
 # standard EmailBackend, so if you're having issues, you may want to
 # search for documentation on using your email provider with Django.
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = ''
+EMAIL_HOST = 'smtp.mailgun.org'
+EMAIL_HOST_USER = 'postmaster@mail.rexdelivery.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 # The email From address to be used for automatically generated emails
-DEFAULT_FROM_EMAIL = "Zulip <zulip@example.com>"
+DEFAULT_FROM_EMAIL = "RexChat <dev@rexdelivery.com>"
 # The noreply address to be used as Reply-To for certain generated emails.
 # Messages sent to this address should not be delivered anywhere.
-NOREPLY_EMAIL_ADDRESS = "noreply@example.com"
+NOREPLY_EMAIL_ADDRESS = "RexChat <dev@rexdelivery.com>"
 
 # A list of strings representing the host/domain names that this
 # Django site can serve. You should reset it to be a list of
