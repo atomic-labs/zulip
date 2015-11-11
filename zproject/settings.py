@@ -730,7 +730,7 @@ PIPELINE_JS = {}  # Now handled in tools/minify-js
 PIPELINE_JS_COMPRESSOR  = None
 
 PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yui.YUICompressor'
-PIPELINE_YUI_BINARY     = 'yuicompressor'
+PIPELINE_YUI_BINARY     = './yuicompressor'
 
 ########################################################################
 # LOGGING SETTINGS
